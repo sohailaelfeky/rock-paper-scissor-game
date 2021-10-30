@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAME</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <div id="overlay" class="overlay overlay-inactive">
+        <div class="rules-card">
+            <div class="rules-header">
+                <h3>RULES</h3>
+                <button>
+                    <img onclick="overlay()" src="images/icon-close.svg">
+                </button>
+            </div>
+            <img src="images/image-rules.svg">
+        </div>
+    </div>
+
+    <header>
+        <h1>
+            ROCK
+            <br />
+            PAPER
+            <br />
+            SCISSORS
+        </h1>
+        <div class="header__score-container">
+            <p class="header__score">SCORE</p>
+            <p class="header__score-value" id="player-score">0</p>
+        </div>
+    </header>
+    <main>
+        <section id="main-section" class="main-section main-section-active">
+            <div class="wrapper-paper">
+            <button id="paper" onclick="playerChoice(this.id,0)" class="game-button game-button-paper">
+                <img src="images/icon-paper.svg" alt="Paper" />
+            </button>
+            
+          
+        </div>
+        <div class="wrapper-scissors">
+            <button id="scissors" onclick="playerChoice(this.id,1)" class="game-button game-button-scissors">
+                <img src="images/icon-scissors.svg" alt="Scissors" />
+            </button>
+        </div>
+            <div class="wrapper-rock">
+            <button id="rock" onclick="playerChoice(this.id,2)" class="game-button game-button-rock">
+                <img src="images/icon-rock.svg" alt="Rock" />
+            </button>
+        </div>
+        </section>
+
+        <section id="result-section" class="result-section result-section-inactive">
+            <div class="result-section__pick-card">
+                <p>YOU PICKED</p>
+                <div id="player-pick-card" class="game-button">
+                    <img id="player-pick-img" src="" alt=" "/>
+                </div>
+            </div>
+
+            <div class="result-section__pick-card order-1">
+                <p>THE HOUSE PICKED</p>
+                <!-- pending here  -->
+                <div id="computer-pick-card" class="game-button game-button-pending  ">
+                    <!-- <img id="computer-pick-img" src="./images/icon-rock.svg" alt=" " /> -->
+                </div>
+            </div>
+
+            <div id="win-lose" class="win-lose win-lose-inactive">
+                <h2 id="win-lose-text">YOU LOSE</h2>
+                <button onclick="playAgain()">PLAY AGAIN</button>
+            </div>
+        </section>
+
+        
+    </main>
+    <footer>
+        <button onclick="overlay()" class="footer__rules-button">
+            RULES
+        </button>
+    </footer>    
+</body>
+
+<script>
+    let score=0
+    let playerLastPick;
+    let computerLastPick;
+    let playerWinValue
+
+
+    function overlay(){
+        document.getElementById("overlay").classList.toggle("overlay-inactive");
+    }
+    function playerChoice(id,playerValue){
+        playerLastPick=id
+        let computerValue = Math.floor(Math.random()*3);
+        let playerWinStatus;
+
+        if(playerValue+1===computerValue || playerValue===2&&computerValue===0){
+            // player lose
+            playerWinStatus="YOU LOSE"
+            playerWinValue=-1
+        }
+        else if (playerValue===computerValue){
+            // draw
+            playerWinStatus="DRAW"
+            playerWinValue=0
+
+        }
+        else{
+            // win
+            playerWinStatus="YOU WIN"
+            playerWinValue=1
+            score++
+        }
+        document.getElementById("main-section").classList.toggle("main-section-inactive")
+        document.getElementById("result-section").classList.toggle("result-section-inactive")
+        document.getElementById("player-pick-card").classList.toggle("game-button-"+id)
+        document.getElementById("player-pick-img").src="images/icon-"+id+".svg"
+
+        let computerPick =document.getElementById("computer-pick-card")
+        let computerValueStr;
+        if(computerValue===0)
+        computerValueStr="paper"
+        else if(computerValue===1)
+        computerValueStr="scissors"
+        else
+        computerValueStr="rock"
+
+        computerLastPick=computerValueStr
+
+        setTimeout(function(){
+            computerPick.classList.toggle("game-button-pending")
+            computerPick.classList.toggle("game-button-"+computerValueStr)
+            let imgComputer=document.createElement("img")
+            imgComputer.id="computer-pick-img"
+            imgComputer.src="images/icon-"+computerValueStr+".svg"
+            computerPick.appendChild(imgComputer)
+
+            document.getElementById("win-lose").classList.toggle("win-lose-inactive")
+            document.getElementById("win-lose-text").innerText=playerWinStatus
+            // update score 
+            setScore(score);
+        },1000)
+    }
+    function playAgain(){
+        document.getElementById("main-section").classList.toggle("main-section-inactive")
+        document.getElementById("result-section").classList.toggle("result-section-inactive")
+        document.getElementById("player-pick-card").classList.toggle("game-button-"+playerLastPick)
+        document.getElementById("player-pick-img").src=""
+        let computerPick =document.getElementById("computer-pick-card")
+        computerPick.classList.toggle("game-button-pending")
+            computerPick.classList.toggle("game-button-"+computerLastPick)
+            document.getElementById("computer-pick-img").remove()
+            document.getElementById("win-lose").classList.toggle("win-lose-inactive")
+            document.getElementById("win-lose-text").innerText=''
+
+        if(playerWinValue===-1){
+            score=0
+            setScore(score)
+        }
+
+
+
+
+    }
+    let setScore = (score) => {
+        let scoreValueElement = document.getElementById('player-score')
+        scoreValueElement.innerHTML = score;
+    }
+
+
+</script>
+
+</html>
